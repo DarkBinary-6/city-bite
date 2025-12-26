@@ -1,0 +1,8 @@
+
+.app-btn img {
+    height: 32px;
+    object-fit: contain;
+}
+.hidden {
+    display: none !important;
+}

@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer - CityBite Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 20px; background: #f0f2f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #map { height: 400px; width: 100%; border-radius: 8px; margin-top: 20px; display: none; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 10px; }
+        button:disabled { background: #ccc; }
+        button.stop { background: #dc3545; }
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; background: #e9ecef; font-weight: bold; margin-bottom: 10px; }
+        .controls { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Customer View</h1>
+        <div id="orderInfo">Loading order...</div>
+        
+        <div class="controls" id="shareControls" style="display:none;">
+            <button id="btnShare" onclick="startSharing()">📍 Share My Location</button>
+            <button id="btnSimulate" onclick="startSimulation()">🏃 Simulate Movement</button>
+            <p><small>Click "Simulate" to automatically move the pin around.</small></p>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="driver-sim.js"></script>
+    <script>
+        const ORDER_ID = 'order123';
+        const USER_ID = 'cust1';
+        let map, marker;
+        let simulationInterval;
+
+        async function init() {
+            const res = await fetch(`/api/orders/${ORDER_ID}`);
+            const order = await res.json();
+            
+            const statusColor = order.status === 'placed' ? '#ffc107' : '#28a745';
+            document.getElementById('orderInfo').innerHTML = `
+                <div class="status-badge" style="background:${statusColor}">Status: ${order.status.toUpperCase()}</div>
+                <p><strong>Order ID:</strong> ${order.id}</p>
+                <p><strong>Destination:</strong> ${order.destination.lat}, ${order.destination.lng}</p>
+            `;
+
+            // Only show controls if order is placed (or accepted, to allow tracking to continue)
+            if (order.status === 'placed' || order.status === 'accepted') {
+                document.getElementById('shareControls').style.display = 'block';
+            }
+        }
+
+        function initMap(lat, lng) {
+            document.getElementById('map').style.display = 'block';
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+                marker = L.marker([lat, lng]).addTo(map).bindPopup("You are here").openPopup();
+            } else {
+                marker.setLatLng([lat, lng]);
+                map.panTo([lat, lng]);
+            }
+        }
+
+        function startSharing() {
+            if (!navigator.geolocation) return alert("Geolocation not supported");
+            
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                await sendLocation(latitude, longitude);
+                initMap(latitude, longitude);
+                alert("Location shared! Wait for driver to accept.");
+            }, (err) => alert("Error getting location: " + err.message));
+        }
+
+        async function sendLocation(lat, lng) {
+            await fetch(`/api/orders/${ORDER_ID}/customer-location`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-user-id': USER_ID 
+                },
+                body: JSON.stringify({ lat, lng })
+            });
+        }
+
+        function startSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+                document.getElementById('btnSimulate').innerText = "🏃 Simulate Movement";
+                return;
+            }
+            
+            // Start at Delhi coordinates (based on db.json destination)
+            let baseLat = 28.6139;
+            let baseLng = 77.2090;
+
+            document.getElementById('btnSimulate').innerText = "⏹ Stop Simulation";
+            initMap(baseLat, baseLng);
+
+            // Use the simulator script logic
+            simulationInterval = setInterval(async () => {
+                // Random walk
+                baseLat += (Math.random() - 0.5) * 0.001;
+                baseLng += (Math.random() - 0.5) * 0.001;
+                
+                await sendLocation(baseLat, baseLng);
+                initMap(baseLat, baseLng);
+                console.log("Simulated location sent:", baseLat, baseLng);
+            }, 2000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

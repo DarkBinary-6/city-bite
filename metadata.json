@@ -1,0 +1,7 @@
+{
+  "name": "CityBite",
+  "description": "A modern, hyper-local food delivery application focusing on fresh aesthetics and AI-powered discovery.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

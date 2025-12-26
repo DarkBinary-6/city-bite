@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | CityBite</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="pay.css" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="max-w-md mx-auto min-h-screen bg-white shadow-lg overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="bg-gray-900 text-white p-6 rounded-b-3xl shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-xl font-bold">CityBite Payments</h1>
+                <div class="text-xs bg-gray-800 px-2 py-1 rounded">SECURE</div>
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-400 text-sm">Amount to Pay</p>
+                <div class="text-4xl font-bold flex items-start">
+                    <span class="text-lg mt-1 mr-1">₹</span>
+                    <span id="amount-display">--</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1" id="order-ref">Order ID: --</p>
+            </div>
+        </div>
+
+        <!-- Payment Options -->
+        <div class="flex-1 p-6" id="payment-options">
+            <h2 class="text-gray-800 font-bold mb-4">Pay via UPI App</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <button onclick="Payment.pay('gpay')" class="app-btn border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition active:scale-95">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" class="h-8 mb-2" alt="GPay">
+                    <span class="text-xs font-bold text-gray-600">Google Pay</span>
+                </button>
+                <button onclick="Payment.pay('phonepe')" class="app-btn border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition active:scale-95">
+                    <img src="https://download.logo.wine/logo/PhonePe/PhonePe-Logo.wine.png" class="h-8 mb-2" alt="PhonePe">
+                    <span class="text-xs font-bold text-gray-600">PhonePe</span>
+                </button>
+                <button onclick="Payment.pay('paytm')" class="app-btn border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition active:scale-95">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" class="h-6 mb-2 mt-2" alt="Paytm">
+                    <span class="text-xs font-bold text-gray-600">Paytm</span>
+                </button>
+                <button onclick="Payment.pay('generic')" class="app-btn border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition active:scale-95">
+                    <div class="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center mb-2 text-green-600 font-bold">UPI</div>
+                    <span class="text-xs font-bold text-gray-600">Other UPI</span>
+                </button>
+            </div>
+
+            <div class="relative py-4">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Or Pay With</span>
+                </div>
+            </div>
+
+            <button onclick="Payment.startFallbackFlow()" class="w-full bg-black text-white py-4 rounded-xl font-bold shadow-lg hover:opacity-90 transition active:scale-95 flex items-center justify-center gap-2">
+                Credit / Debit Card
+            </button>
+        </div>
+
+        <!-- Processing State -->
+        <div id="processing-view" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900 mb-6"></div>
+            <h2 class="text-xl font-bold mb-2">Waiting for confirmation</h2>
+            <p class="text-gray-500 mb-8">Please complete the payment in your app.</p>
+            <button onclick="Payment.reset()" class="text-blue-600 font-bold text-sm hover:underline">Cancel & Retry</button>
+        </div>
+
+        <!-- Success State -->
+        <div id="success-view" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center bg-green-50">
+            <div class="bg-green-100 p-4 rounded-full mb-6 animate-bounce">
+                <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-green-800 mb-2">Payment Successful!</h2>
+            <p class="text-green-600 mb-8">Redirecting back to CityBite...</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 bg-gray-50 text-center text-xs text-gray-400">
+            Secured by Razorpay & CityBite
+        </div>
+    </div>
+    <script src="pay.js"></script>
+</body>
+</html>

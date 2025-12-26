@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CityBite - Local Food Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.css" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #FAFAF7; /* Soft Cream */
+        color: #2B2B2B; /* Charcoal Gray */
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8; 
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      /* Global Input Style Override for readability - White BG, Black Text */
+      input, select, textarea {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border-color: #e2e8f0;
+      }
+      input:focus, select:focus, textarea:focus {
+        border-color: #C62828 !important; /* Brand Red */
+        ring-color: #C62828 !important;
+        outline: 2px solid #C62828;
+        outline-offset: -1px;
+      }
+      input::placeholder {
+        color: #9ca3af !important;
+      }
+      /* Mapbox popup/marker fixes */
+      .mapboxgl-ctrl-bottom-right, .mapboxgl-ctrl-bottom-left { display: none !important; }
+      
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+      
+      @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1); }
+
+      @keyframes slideDown { from { transform: translate(-50%, -20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+      .animate-slide-down { animation: slideDown 0.4s cubic-bezier(0, 0, 0.2, 1); }
+      
+      @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .animate-scale-up { animation: scaleUp 0.3s cubic-bezier(0, 0, 0.2, 1); }
+
+      /* Specialized 3-second fade in/out animation for cancellation */
+      @keyframes fadeOutDelayed {
+        0% { opacity: 0; transform: scale(0.95); }
+        10% { opacity: 1; transform: scale(1); }
+        85% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(1.05); }
+      }
+      .animate-cancel-popup { animation: fadeOutDelayed 3s forwards cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#ffebee',
+                100: '#ffcdd2',
+                200: '#ef9a9a',
+                300: '#e57373',
+                400: '#ef5350',
+                500: '#C62828', 
+                600: '#b71c1c',
+                700: '#c62828',
+                800: '#b71c1c',
+                900: '#880e4f',
+              },
+              accent: {
+                50: '#fff8e1',
+                100: '#ffecb3',
+                200: '#ffe082',
+                300: '#ffd54f',
+                400: '#ffca28',
+                500: '#FFB300', 
+                600: '#ffca28', 
+                700: '#ffa000',
+              },
+              cream: {
+                50: '#FAFAF7',
+                100: '#f5f5f0',
+              },
+              charcoal: {
+                900: '#2B2B2B', 
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0",
+    "mapbox-gl": "https://esm.sh/mapbox-gl@3.9.4",
+    "@google/genai": "https://esm.sh/@google/genai@1.33.0",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

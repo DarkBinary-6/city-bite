@@ -1,0 +1,16 @@
+
+{
+  "orders": {
+    "order123": {
+      "id": "order123",
+      "status": "placed",
+      "customerId": "cust1",
+      "acceptedBy": null,
+      "customerLocation": null,
+      "destination": {
+        "lat": 28.6139,
+        "lng": 77.209
+      }
+    }
+  }
+}
